@@ -40,7 +40,7 @@ const ListEmployees = () => {
     observer.current = new IntersectionObserver((entries) => {
       if (entries[0].isIntersecting && hasMore) {
         setPageNumber((prevPage) => prevPage + 1);
-        fethEmployees('',pageNumber+1)
+        fethEmployees(search, pageNumber + 1, pageSize);
       }
     });
     if (lastItemRef.current) observer.current.observe(lastItemRef.current);
@@ -49,7 +49,11 @@ const ListEmployees = () => {
     };
   }, [loading, hasMore, lastItemRef]);
 
-  const fethEmployees = async (search:string='',pageNumber:number=1,pageSize:number=10) => {
+  const fethEmployees = async (
+    search: string = "",
+    pageNumber: number = 1,
+    pageSize: number = 10
+  ) => {
     setLoading(true);
     const result = await getEmployees({
       search,
@@ -57,7 +61,7 @@ const ListEmployees = () => {
       pageSize,
     });
     console.log("fetch", search, pageNumber, pageSize, result);
-    let newListEmployees={
+    let newListEmployees = {
       ...result,
       pageItems: [...listEmployees.pageItems, ...result.pageItems],
     };
@@ -80,17 +84,21 @@ const ListEmployees = () => {
 
   const handleSearch = async () => {
     setLoading(true);
-    setPageNumber(1)
+    setPageNumber(1);
     const result = await getEmployees({
       search,
       pageNumber: 1,
       pageSize: 10,
     });
-    console.log("search", search, pageNumber, pageSize, result);
+    console.log("search", search, 1, 10, result);
     setListEmployees(result);
     setHasMore(result.pageItems.length < result.totalItems);
     setLoading(false);
   };
+
+  useEffect(() => {
+    console.log("list employees", listEmployees);
+  }, [listEmployees]);
 
   return (
     <div>
