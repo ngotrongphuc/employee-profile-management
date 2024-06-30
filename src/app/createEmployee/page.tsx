@@ -19,7 +19,7 @@ import {
 import { useEffect, useMemo, useState } from "react";
 import { createEmployee, getPositionResources } from "../axios";
 import { Employee, PositionResources } from "../types";
-import { find, map, mapValues } from "lodash";
+import { find, isEmpty, map, mapValues } from "lodash";
 import {
   LoadingOutlined,
   PlusOutlined,
@@ -34,7 +34,12 @@ const CreateEmployee = () => {
   );
   const [loading, setLoading] = useState<boolean>(false);
   const [form] = Form.useForm();
-  const router = useRouter()
+  const formWatch = Form.useWatch((values) => values, form);
+  const router = useRouter();
+
+  useEffect(() => {
+    console.log(formWatch);
+  }, [formWatch]);
 
   const positionOptions = useMemo(
     () =>
@@ -58,6 +63,7 @@ const CreateEmployee = () => {
 
   const handleSave = async () => {
     const formData = form.getFieldsValue();
+    console.log("formData", formData);
     const positionsData = formData.positions.map(
       (positionData: any, positionDataIndex: number) => {
         const toolLanguagesData = positionData.toolLanguages.map(
@@ -92,17 +98,17 @@ const CreateEmployee = () => {
     const result = await createEmployee(employeeData);
     console.log(result);
     notification.success({
-      message: 'Created successfully!',
+      message: "Created successfully!",
       duration: 2,
-      placement:'top'
+      placement: "top",
     });
-    router.push('/listEmployees')
+    router.push("/listEmployees");
   };
 
   return (
     <div>
       <Link href="/listEmployees">
-        <RollbackOutlined className="text-2xl"/>
+        <RollbackOutlined className="text-2xl" />
       </Link>
       <Typography.Title level={2}>List Employees</Typography.Title>
       <Form
@@ -116,13 +122,17 @@ const CreateEmployee = () => {
         <Form.Item
           label="Name"
           name="name"
-          labelCol={{ span: 8 }}
-          wrapperCol={{ span: 16 }}
+          labelCol={{ span: 3 }}
+          wrapperCol={{ span: 21 }}
           labelAlign="left"
         >
           <Row gutter={{ xs: 8, sm: 16, md: 24 }}>
             <Col span={16}>
-              <Form.Item name="name" noStyle rules={[{ required: true, message: 'Please input name!' }]}>
+              <Form.Item
+                name="name"
+                noStyle
+                rules={[{ required: true, message: "Please input name!" }]}
+              >
                 <Input />
               </Form.Item>
             </Col>
@@ -135,13 +145,22 @@ const CreateEmployee = () => {
                 <div>
                   <Form.Item
                     label="Postion"
-                    labelCol={{ span: 8 }}
-                    wrapperCol={{ span: 16 }}
+                    labelCol={{ span: 3 }}
+                    wrapperCol={{ span: 21 }}
                     labelAlign="left"
                   >
                     <Row gutter={{ xs: 8, sm: 16, md: 24 }}>
                       <Col span={16}>
-                        <Form.Item name={[field.name, "position"]} noStyle rules={[{ required: true, message: 'Please choose one position!' }]}>
+                        <Form.Item
+                          name={[field.name, "position"]}
+                          noStyle
+                          rules={[
+                            {
+                              required: true,
+                              message: "Please choose one position!",
+                            },
+                          ]}
+                        >
                           <Select options={positionOptions} labelInValue />
                         </Form.Item>
                       </Col>
@@ -161,8 +180,8 @@ const CreateEmployee = () => {
                   {/* Nest Form.List */}
                   <Form.Item
                     label="Tool/Language"
-                    labelCol={{ span: 8 }}
-                    wrapperCol={{ span: 16 }}
+                    labelCol={{ span: 3 }}
+                    wrapperCol={{ span: 21 }}
                     labelAlign="left"
                   >
                     <Form.List name={[field.name, "toolLanguages"]}>
@@ -196,7 +215,13 @@ const CreateEmployee = () => {
                                       return (
                                         <Form.Item
                                           name={[subField.name, "toolLanguage"]}
-                                          rules={[{ required: true, message: 'Please choose one tool/language!' }]}
+                                          rules={[
+                                            {
+                                              required: true,
+                                              message:
+                                                "Please choose one tool/language!",
+                                            },
+                                          ]}
                                         >
                                           <Select
                                             placeholder="Select Tool/Language"
@@ -209,7 +234,15 @@ const CreateEmployee = () => {
                                   </Form.Item>
                                 </Col>
                                 <Col span={8}>
-                                  <Form.Item name={[subField.name, "fromTo"]} rules={[{ required: true, message: 'Please select years!' }]}>
+                                  <Form.Item
+                                    name={[subField.name, "fromTo"]}
+                                    rules={[
+                                      {
+                                        required: true,
+                                        message: "Please select years!",
+                                      },
+                                    ]}
+                                  >
                                     <DatePicker.RangePicker
                                       picker="year"
                                       placeholder={["From", "To"]}
@@ -232,7 +265,12 @@ const CreateEmployee = () => {
                                 <Col span={16}>
                                   <Form.Item
                                     name={[subField.name, "description"]}
-                                    rules={[{ required: true, message: 'Please input description!' }]}
+                                    rules={[
+                                      {
+                                        required: true,
+                                        message: "Please input description!",
+                                      },
+                                    ]}
                                   >
                                     <Input.TextArea
                                       rows={4}
@@ -304,16 +342,20 @@ const CreateEmployee = () => {
                 </div>
               ))}
 
-              <Button type="primary" onClick={() => opt.add()}>
-                Add Position
-              </Button>
+              <Row gutter={{ xs: 8, sm: 16, md: 24 }}>
+                <Col span={16} offset={3}>
+                  <Button type="primary" onClick={() => opt.add()}>
+                    Add Position
+                  </Button>
+                </Col>
+              </Row>
             </div>
           )}
         </Form.List>
 
         <Form.Item
-          labelCol={{ span: 8 }}
-          wrapperCol={{ span: 16 }}
+          labelCol={{ span: 3 }}
+          wrapperCol={{ span: 21 }}
           label=" "
           colon={false}
         >
