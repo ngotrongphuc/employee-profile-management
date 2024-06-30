@@ -1,32 +1,29 @@
 "use client";
 import {
+  LoadingOutlined,
+  PlusOutlined,
+  RollbackOutlined,
+} from "@ant-design/icons";
+import {
   Button,
   Col,
   DatePicker,
   Divider,
-  Dropdown,
-  Flex,
   Form,
   Image,
   Input,
   Row,
   Select,
-  Space,
   Typography,
   Upload,
-  notification,
+  notification
 } from "antd";
-import { useEffect, useMemo, useState } from "react";
-import { createEmployee, getPositionResources } from "../axios";
-import { Employee, PositionResources } from "../types";
-import { find, isEmpty, map, mapValues } from "lodash";
-import {
-  LoadingOutlined,
-  PlusOutlined,
-  RollbackOutlined,
-} from "@ant-design/icons";
+import { find } from "lodash";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
+import { createEmployee, getPositionResources } from "../axios";
+import { PositionResources } from "../types";
 
 const CreateEmployee = () => {
   const [positionResources, setPositionResources] = useState<PositionResources>(
@@ -63,7 +60,6 @@ const CreateEmployee = () => {
 
   const handleSave = async () => {
     const formData = form.getFieldsValue();
-    console.log("formData", formData);
     const positionsData = formData.positions.map(
       (positionData: any, positionDataIndex: number) => {
         const toolLanguagesData = positionData.toolLanguages.map(

@@ -1,6 +1,5 @@
 import axios from "axios";
 import { Employee, Employees, PositionResources } from "../types";
-import { objectToFormData } from "../utils";
 
 export const getEmployees = async (params: {
   search: string;

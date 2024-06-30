@@ -1,8 +1,8 @@
 "use server";
-import { promises as fs } from "fs";
-import path from "path";
 import { Employees, PositionResources } from "@/app/types";
+import { promises as fs } from "fs";
 import { type NextRequest } from "next/server";
+import path from "path";
 
 const jsonDirectory = path.join(process.cwd(), "");
 const filePath = jsonDirectory + "/mockDb.json";

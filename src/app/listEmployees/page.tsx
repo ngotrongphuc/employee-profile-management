@@ -10,20 +10,16 @@ import {
   Typography,
   notification,
 } from "antd";
+import Link from "next/link";
 import {
   ChangeEvent,
-  ChangeEventHandler,
-  useCallback,
   useEffect,
   useRef,
-  useState,
+  useState
 } from "react";
-import EmployeeItem from "../components/EmployeeItem";
-import { Employee, Employees } from "../types";
-import axios from "axios";
 import { deleteEmployee, getEmployees } from "../axios";
-import { isEmpty } from "lodash";
-import Link from "next/link";
+import EmployeeItem from "../components/EmployeeItem";
+import { Employees } from "../types";
 
 const ListEmployees = () => {
   const [listEmployees, setListEmployees] = useState<Employees>({
@@ -70,19 +66,10 @@ const ListEmployees = () => {
       pageNumber,
       pageSize,
     });
-    console.log("fetch", search, pageNumber, pageSize, result);
     let newListEmployees = {
       ...result,
       pageItems: [...listEmployees.pageItems, ...result.pageItems],
     };
-    // if (isEmpty(search)) {
-    //   newListEmployees = {
-    //     ...result,
-    //     pageItems: [...listEmployees.pageItems, ...result.pageItems],
-    //   };
-    // } else {
-    //   newListEmployees = result;
-    // }
     setListEmployees(newListEmployees);
     setHasMore(newListEmployees.pageItems.length < newListEmployees.totalItems);
     setLoading(false);
@@ -100,7 +87,6 @@ const ListEmployees = () => {
       pageNumber: 1,
       pageSize: 10,
     });
-    console.log("search", search, 1, 10, result);
     setListEmployees(result);
     setHasMore(result.pageItems.length < result.totalItems);
     setLoading(false);

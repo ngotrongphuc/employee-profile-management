@@ -6,15 +6,15 @@ export const objectToFormData = (object: any) => {
   return formData;
 };
 
-function deepSet(obj:any, path:any, value:any) {
+function deepSet(obj: any, path: any, value: any) {
   if (Object(obj) !== obj) return obj; // When obj is not an object
   // If not yet an array, get the keys from the string-path
   if (!Array.isArray(path)) path = path.toString().match(/[^.[\]]+/g) || [];
   path.slice(0, -1).reduce(
     (
-      a:any,
-      c:any,
-      i:any // Iterate all of them except the last one
+      a: any,
+      c: any,
+      i: any // Iterate all of them except the last one
     ) =>
       Object(a[c]) === a[c] // Does the key exist and is its value an object?
         ? // Yes: then follow that path
@@ -31,7 +31,7 @@ function deepSet(obj:any, path:any, value:any) {
 
 // Use it for formData:
 export function formDataToObject(formData: any) {
-  const root:any = {};
+  const root: any = {};
   for (const [path, value] of formData) {
     deepSet(root, path, value);
   }

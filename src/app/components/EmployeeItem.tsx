@@ -1,16 +1,15 @@
-import {
-  EditOutlined,
-  EllipsisOutlined,
-  SettingOutlined,
-} from "@ant-design/icons";
-import { Avatar, Button, Card, Carousel, Image, notification } from "antd";
-import Text from "antd/lib/typography/Text";
+import { Button, Card, Carousel, Image } from "antd";
 import Meta from "antd/lib/card/Meta";
+import { useState } from "react";
 import { Employee } from "../types";
-import { useEffect, useState } from "react";
-import { deleteEmployee } from "../axios";
 
-const EmployeeItem = ({ employee, onDelete }: { employee: Employee,onDelete:()=>{} }) => {
+const EmployeeItem = ({
+  employee,
+  onDelete,
+}: {
+  employee: Employee;
+  onDelete: () => {};
+}) => {
   const [deleteBtnVisible, setDeleteBtnVisible] = useState(false);
 
   const arrImages = employee.positions.flatMap((position) =>
@@ -34,21 +33,11 @@ const EmployeeItem = ({ employee, onDelete }: { employee: Employee,onDelete:()=>
     setDeleteBtnVisible(false);
   };
 
-  const handleDelete=async()=>{
-    const result=await deleteEmployee(employee.id as number)
-    console.log(result);
-    notification.success({
-      message: 'Deleted successfully!',
-      duration: 2,
-      placement:'top'
-    });
-  }
-
   return (
     <div>
       <Card
         className="shadow-sm"
-        style={{ width: 300, height:400 }}
+        style={{ width: 300, height: 400 }}
         cover={
           <Carousel draggable>
             {arrImages.map((url, index) => (
