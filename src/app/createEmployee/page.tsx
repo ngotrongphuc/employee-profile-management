@@ -16,7 +16,7 @@ import {
   Select,
   Typography,
   Upload,
-  notification
+  notification,
 } from "antd";
 import { find } from "lodash";
 import Link from "next/link";
@@ -138,7 +138,7 @@ const CreateEmployee = () => {
           {(fields, opt) => (
             <div>
               {fields.map((field, fieldIndex) => (
-                <div>
+                <div key={field.key}>
                   <Form.Item
                     label="Postion"
                     labelCol={{ span: 3 }}
@@ -184,11 +184,8 @@ const CreateEmployee = () => {
                       {(subFields, subOpt) => (
                         <div>
                           {subFields.map((subField, subFieldIndex) => (
-                            <>
-                              <Row
-                                key={subField.key}
-                                gutter={{ xs: 8, sm: 16, md: 24 }}
-                              >
+                            <div key={subField.key}>
+                              <Row gutter={{ xs: 8, sm: 16, md: 24 }}>
                                 <Col span={8}>
                                   <Form.Item noStyle shouldUpdate>
                                     {() => {
@@ -315,7 +312,7 @@ const CreateEmployee = () => {
                                   }`}
                                 />
                               </Col>
-                            </>
+                            </div>
                           ))}
                           <Button
                             type="primary"
