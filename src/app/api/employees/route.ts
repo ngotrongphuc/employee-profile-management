@@ -1,16 +1,22 @@
 "use server";
 import { promises as fs } from "fs";
 import path from "path";
-import { Employees, PositionResources } from "@/app/types";
+import {
+  Employee,
+  Employees,
+  Position,
+  PositionResources,
+  ToolLanguage,
+} from "@/app/types";
 import { type NextRequest } from "next/server";
-import { toNumber, chunk, ceil } from "lodash";
+import { toNumber, chunk, ceil, isEmpty, random } from "lodash";
+import { formDataToObject } from "@/app/utils";
+
+const jsonDirectory = path.join(process.cwd(), "");
+const filePath = jsonDirectory + "/mockDb.json";
 
 export async function GET(request: NextRequest) {
-  const jsonDirectory = path.join(process.cwd(), "");
-  const fileContents = await fs.readFile(
-    jsonDirectory + "/mockDb.json",
-    "utf8"
-  );
+  const fileContents = await fs.readFile(filePath, "utf8");
   const db: { employees: Employees; positionResources: PositionResources } =
     JSON.parse(fileContents);
   const employees = db.employees;
@@ -28,10 +34,74 @@ export async function GET(request: NextRequest) {
   const result: Employees = {
     totalItems,
     totalPages,
-    pageItems: paginatedPageItems||[],
+    pageItems: paginatedPageItems || [],
   };
 
   return Response.json(result, {
+    status: 200,
+    statusText: "success",
+  });
+}
+
+export async function POST(request: NextRequest) {
+  const fileContents = await fs.readFile(filePath, "utf8");
+  const db: { employees: Employees; positionResources: PositionResources } =
+    JSON.parse(fileContents);
+  const employees: Employees = db.employees;
+
+  const formData = await request.formData();
+
+  const employeeObj = formDataToObject(formData);
+
+  if (isEmpty(formDataToObject(formData))) {
+    return new Response(`Error`, {
+      status: 400,
+    });
+  }
+
+  const newEmployee: Employee = {
+    ...employeeObj,
+    id: Date.now(),
+    positions: formDataToObject(formData).positions.map(
+      (position: Position) => ({
+        ...position,
+        id: random(1, 999999),
+        toolLanguages: position.toolLanguages.map(
+          (toolLanguage: ToolLanguage) => ({
+            ...toolLanguage,
+            id: random(1, 999999),
+            images: toolLanguage?.images
+              ? toolLanguage?.images?.map((image: any) => ({
+                  displayOrder: image.displayOrder,
+                  id: random(1, 999999),
+                  cdnUrl: `https://picsum.photos/id/${random(0, 999)}/300/200`,
+                }))
+              : [
+                  {
+                    displayOrder: 0,
+                    id: random(1, 999999),
+                    cdnUrl: "https://via.placeholder.com/300",
+                  },
+                ],
+          })
+        ),
+      })
+    ),
+  };
+
+  const newData = {
+    ...db,
+    employees: {
+      ...employees,
+      totalItems: employees.totalItems + 1,
+      totalPages: ceil((employees.totalItems + 1) / 10),
+      pageItems: [...employees.pageItems, newEmployee],
+    },
+  };
+
+  await fs.writeFile(filePath, JSON.stringify(newData, null, 2), "utf8");
+
+  return Response.json(newEmployee, {
     status: 200,
     statusText: "success",
   });

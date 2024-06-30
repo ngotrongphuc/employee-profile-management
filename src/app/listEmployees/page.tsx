@@ -1,6 +1,15 @@
 "use client";
-import Title from "antd/lib/typography/Title";
-import { Button, Col, Flex, Input, Row, Space, Spin } from "antd";
+import {
+  Button,
+  Col,
+  Flex,
+  Input,
+  Row,
+  Space,
+  Spin,
+  Typography,
+  notification,
+} from "antd";
 import {
   ChangeEvent,
   ChangeEventHandler,
@@ -12,8 +21,9 @@ import {
 import EmployeeItem from "../components/EmployeeItem";
 import { Employee, Employees } from "../types";
 import axios from "axios";
-import { getEmployees } from "../axios";
+import { deleteEmployee, getEmployees } from "../axios";
 import { isEmpty } from "lodash";
+import Link from "next/link";
 
 const ListEmployees = () => {
   const [listEmployees, setListEmployees] = useState<Employees>({
@@ -100,9 +110,20 @@ const ListEmployees = () => {
     console.log("list employees", listEmployees);
   }, [listEmployees]);
 
+  const handleDeleteEmployee = async (id: number) => {
+    const result = await deleteEmployee(id);
+    console.log(result);
+    notification.success({
+      message: "Deleted successfully!",
+      duration: 2,
+      placement: "top",
+    });
+    setListEmployees(result)
+  };
+
   return (
     <div>
-      <Title level={2}>List Employees</Title>
+      <Typography.Title level={2}>List Employees</Typography.Title>
       <Flex justify="space-between">
         <Space>
           <p>Search Name:</p>
@@ -117,9 +138,11 @@ const ListEmployees = () => {
           </Button>
         </Space>
         <Space>
-          <Button size="large" type="primary" className="bg-green-600">
-            Add employee
-          </Button>
+          <Link href="/createEmployee">
+            <Button size="large" type="primary" className="bg-green-600">
+              Add employee
+            </Button>
+          </Link>
         </Space>
       </Flex>
       <Row
@@ -131,6 +154,7 @@ const ListEmployees = () => {
       >
         {listEmployees?.pageItems.map((employee, index) => (
           <Col
+            key={employee.id}
             span={16}
             xs={14}
             sm={12}
@@ -142,7 +166,10 @@ const ListEmployees = () => {
               index === listEmployees?.pageItems.length - 1 ? lastItemRef : null
             }
           >
-            <EmployeeItem key={employee.id} employee={employee} />
+            <EmployeeItem
+              employee={employee}
+              onDelete={() => handleDeleteEmployee(employee.id as number)}
+            />
           </Col>
         ))}
       </Row>

@@ -3,13 +3,14 @@ import {
   EllipsisOutlined,
   SettingOutlined,
 } from "@ant-design/icons";
-import { Avatar, Button, Card, Carousel, Image } from "antd";
+import { Avatar, Button, Card, Carousel, Image, notification } from "antd";
 import Text from "antd/lib/typography/Text";
 import Meta from "antd/lib/card/Meta";
 import { Employee } from "../types";
 import { useEffect, useState } from "react";
+import { deleteEmployee } from "../axios";
 
-const EmployeeItem = ({ employee }: { employee: Employee }) => {
+const EmployeeItem = ({ employee, onDelete }: { employee: Employee,onDelete:()=>{} }) => {
   const [deleteBtnVisible, setDeleteBtnVisible] = useState(false);
 
   const arrImages = employee.positions.flatMap((position) =>
@@ -33,11 +34,21 @@ const EmployeeItem = ({ employee }: { employee: Employee }) => {
     setDeleteBtnVisible(false);
   };
 
+  const handleDelete=async()=>{
+    const result=await deleteEmployee(employee.id as number)
+    console.log(result);
+    notification.success({
+      message: 'Deleted successfully!',
+      duration: 2,
+      placement:'top'
+    });
+  }
+
   return (
     <div>
       <Card
         className="shadow-sm"
-        style={{ width: 300 }}
+        style={{ width: 300, height:400 }}
         cover={
           <Carousel draggable>
             {arrImages.map((url, index) => (
@@ -58,9 +69,10 @@ const EmployeeItem = ({ employee }: { employee: Employee }) => {
           <Button
             size="large"
             type="primary"
-            className={`bg-red-600 ${
+            className={`bg-red-600 w-28 ${
               deleteBtnVisible ? "visible" : "invisible"
             }`}
+            onClick={onDelete}
           >
             Delete
           </Button>,
@@ -71,12 +83,12 @@ const EmployeeItem = ({ employee }: { employee: Employee }) => {
             <div>
               <div className="flex justify-between">
                 <p className="w-fit">{employee.name}</p>
-                <p>{totalYears}</p>
+                <p>{totalYears} years</p>
               </div>
               <p className="font-normal">Frontend</p>
             </div>
           }
-          description="This is the descriptionnnnnnnnnnnnnnn"
+          description={employee.positions[0].toolLanguages[0].description}
         />
       </Card>
     </div>

@@ -1,5 +1,5 @@
 export type Employee = {
-  id: number;
+  id?: number;
   name: string;
   positions: Array<{
     id: number;
@@ -32,3 +32,21 @@ export type PositionResources = Array<{
     name: string;
   }>;
 }>;
+
+export type ToolLanguage = {
+  toolLanguageResourceId: number;
+  displayOrder: number;
+  from: number;
+  to: number;
+  description: string;
+  images: {
+    data: Blob;
+    displayOrder: number;
+  }[];
+};
+
+export type Position = {
+  positionResourceId: number;
+  displayOrder: number;
+  toolLanguages: ToolLanguage[];
+};
