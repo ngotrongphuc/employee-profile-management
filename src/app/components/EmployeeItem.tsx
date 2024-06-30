@@ -46,6 +46,7 @@ const EmployeeItem = ({
                   src={url}
                   preview={false}
                   height={200}
+                  alt="portfolio image"
                   className="object-contain"
                 />
               </div>
@@ -56,6 +57,7 @@ const EmployeeItem = ({
         onMouseLeave={hideDeleteButton}
         actions={[
           <Button
+            key={1}
             size="large"
             type="primary"
             className={`bg-red-600 w-28 ${
